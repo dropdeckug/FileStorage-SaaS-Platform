@@ -14,16 +14,29 @@ export const apiKeysColumns: ColumnDef<any>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    cell: ({ row }) => format(row.getValue("createdAt"), "MMM dd, yyyy"),
+    cell: ({ row }) => <span>{row.original?.name}</span>,
   },
   {
     accessorKey: "displayKey",
     header: "Display Key",
     cell: ({ row }) => {
       const displayKey = row.original?.displayKey;
+      const maskedKey = displayKey.endsWith("...")
+        ? displayKey.replace(/\.\.\.$/, "")
+        : displayKey;
       return (
-        <div className="px-2 py-1 border border-gray-200 bg-gray-100 dark:bg-gray-700 dark:border-gray-800">
-          {displayKey}
+        <div
+          className="relative px-2 h-8 border rounded-sm bg-muted overflow-hidden whitespace-nowrap
+          max-w-[185px] flex items-center
+        "
+        >
+          <span className="relative z-20">{maskedKey}</span>
+          <span
+            className="whitespace-nowrap block mt-4 -ml-[0.5px]"
+            aria-hidden="true"
+          >
+            ********************
+          </span>
         </div>
       );
     },
@@ -34,9 +47,14 @@ export const apiKeysColumns: ColumnDef<any>[] = [
     cell: ({ row }) => format(row.getValue("createdAt"), "MMM dd, yyyy"),
   },
   {
-    accessorKey: "lastUsed",
+    accessorKey: "lastUsedAt",
     header: "Last Used",
-    cell: ({ row }) => format(row.getValue("lastUsedAt"), "MMM dd, yyyy"),
+    cell: ({ row }) => {
+      const lastUsedAt = row.original?.lastUsedAt;
+      return (
+        <span>{lastUsedAt ? format(lastUsedAt, "MMM dd, yyyy") : "Never"}</span>
+      );
+    },
   },
   {
     id: "actions",
@@ -47,9 +65,22 @@ export const apiKeysColumns: ColumnDef<any>[] = [
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ActionsCell = ({ row }: { row: any }) => {
-  const apiKeyId = row.original.id;
-  console.log(apiKeyId);
+  const apiKeyId = row.original._id;
   const isDeleting = false;
+  //const [deleteApiKey, { isLoading: isDeleting }] = useDeleteApiKeyMutation();
+
+  const handleDelete = () => {
+    if (!apiKeyId) return;
+    // deleteApiKey(apiKeyId)
+    //   .unwrap()
+    //   .then(() => {
+    //     toast.success("Apikey deleted successfully");
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     toast.error("Failed to deleted apikey");
+    //   });
+  };
   return (
     <DropdownMenu modal>
       <DropdownMenuTrigger asChild>
@@ -65,15 +96,14 @@ const ActionsCell = ({ row }: { row: any }) => {
         }}
       >
         <DropdownMenuItem
-          className="relative !text-destructive"
+          className="relative !text-red-500 !font-medium"
           disabled={isDeleting}
           onSelect={(e: Event) => {
             e.preventDefault();
-            return;
-            //handleDelete(e);
+            handleDelete();
           }}
         >
-          <Trash2 className="mr-1 h-4 w-4 !text-destructive" />
+          <Trash2 className="mr-1 h-4 w-4 !text-red-500" />
           Delete
           {isDeleting && (
             <Loader className="ml-1 h-4 w-4 absolute right-2 animate-spin" />
@@ -83,9 +113,3 @@ const ActionsCell = ({ row }: { row: any }) => {
     </DropdownMenu>
   );
 };
-
-export const tempdata = [
-  {
-    name: "",
-  },
-];

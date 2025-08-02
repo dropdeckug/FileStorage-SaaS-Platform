@@ -52,6 +52,7 @@ interface DataTableProps<TData> {
   selection?: boolean;
   isLoading?: boolean;
   isShowPagination?: boolean;
+  emptyTitle?: string;
   pagination?: {
     totalItems?: number;
     totalPages?: number;
@@ -78,6 +79,7 @@ export function DataTable<TData>({
   selection = true,
   isLoading = false,
   isShowPagination = true,
+  emptyTitle,
   pagination,
   rowSelection,
   onRowSelectionChange,
@@ -238,7 +240,10 @@ export function DataTable<TData>({
                     colSpan={columns.length}
                     className="text-center h-24"
                   >
-                    <EmptyState title="No records found" description="" />
+                    <EmptyState
+                      title={emptyTitle || "No records found"}
+                      description=""
+                    />
                   </TableCell>
                 </TableRow>
               )}

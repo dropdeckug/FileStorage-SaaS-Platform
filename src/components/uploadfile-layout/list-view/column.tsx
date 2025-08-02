@@ -2,7 +2,7 @@
 import type React from "react";
 import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
-import { formatBytes, getCleanAssetType } from "@/lib/format-utils";
+import { getCleanAssetType } from "@/lib/format-utils";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import {
@@ -12,19 +12,7 @@ import {
   FileImage,
   FileQuestion,
 } from "lucide-react";
-
-// Define the Asset type
-export interface FileType {
-  _id: string;
-  id?: string;
-  originalName: string;
-  url: string;
-  mimeType: string;
-  ext: string;
-  size: number;
-  uploadedVia: string;
-  createdAt: Date;
-}
+import { IMAGE_EXTENSIONS } from "@/constant";
 
 // Icons for different file types
 const fileTypeIcons: { [key: string]: React.ElementType } = {
@@ -73,14 +61,12 @@ export const listColumns: ColumnDef<any>[] = [
     header: "Display Name",
     cell: ({ row }) => {
       const asset = row.original;
-      const isImageType = ["JPG", "PNG", "GIF", "SVG"].includes(
-        asset.ext.toUpperCase()
-      );
+      const isImageType = IMAGE_EXTENSIONS.includes(asset.ext.toUpperCase());
       const IconComponent =
         fileTypeIcons[asset.ext.toUpperCase()] || fileTypeIcons.DEFAULT;
 
       return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 max-w-[350px]">
           <div className="w-13 h-13 flex-shrink-0 flex items-center justify-center rounded-md overflow-hidden border border-gray-200 dark:border-gray-700">
             {isImageType ? (
               <img
@@ -88,13 +74,15 @@ export const listColumns: ColumnDef<any>[] = [
                 alt={asset.originalName}
                 width={40}
                 height={40}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-md"
               />
             ) : (
               <IconComponent className="w-6 h-6 text-gray-500 dark:text-gray-400" />
             )}
           </div>
-          <h5 className="truncate font-medium">{asset.originalName}</h5>
+          <h5 className="block whitespace-nowrap truncate font-medium">
+            {asset.originalName}
+          </h5>
         </div>
       );
     },
@@ -106,7 +94,7 @@ export const listColumns: ColumnDef<any>[] = [
       const asset = row.original;
       const cleanAssetType = getCleanAssetType(asset.mimeType, asset.ext);
       return (
-        <div className="px-2 py-1 border border-gray-200 bg-gray-100 dark:bg-secondary dark:border-gray-800 text-xs rounded-sm">
+        <div className="px-2 py-1 border border-gray-200 bg-gray-100 dark:bg-secondary dark:border-gray-800 text-xs rounded-sm max-w-[180px]">
           {cleanAssetType}
         </div>
       );
@@ -124,8 +112,8 @@ export const listColumns: ColumnDef<any>[] = [
     accessorKey: "size",
     header: "Size",
     cell: ({ row }) => {
-      const size = row.original?.size;
-      return <span className="text-sm">{formatBytes(size)}</span>;
+      const formattedSize = row.original?.formattedSize;
+      return <span className="text-sm">{formattedSize}</span>;
     },
   },
   {

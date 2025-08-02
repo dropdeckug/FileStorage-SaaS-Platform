@@ -1,9 +1,8 @@
-import { DataTable } from "@/components/data-table";
 import PageLayout from "@/components/page-layout";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import { apiKeysColumns } from "./_component/column";
 import CreateApiKeyDialog from "./_component/create-apikey";
+import AllApiKeys from "./_component/all-apikeys";
 
 const ApiKeys = () => {
   return (
@@ -20,7 +19,7 @@ const ApiKeys = () => {
       }
     >
       <div className="w-full h-auto">
-        <DataTable data={[]} columns={apiKeysColumns} showSearch={false} />
+        <AllApiKeys />
       </div>
     </PageLayout>
   );

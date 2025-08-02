@@ -49,7 +49,7 @@ const CreateApiKeyDialog = ({ children }: CreateApiKeyDialogProps) => {
   const [generatedKey, setGeneratedKey] = useState("");
   const [isKeyGenerated, setIsKeyGenerated] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
   const [isOpen, setIsOpen] = useState(false);
 
   const form = useForm<CreateApiKeyFormData>({
@@ -59,6 +59,9 @@ const CreateApiKeyDialog = ({ children }: CreateApiKeyDialogProps) => {
     },
   });
 
+  //const [createApiKey, { isLoading }] = useCreateApiKeyMutation();
+
+  const isLoading = false;
   // Generate a mock API key
   const generateApiKey = () => {
     const prefix = "sk-";
@@ -74,20 +77,26 @@ const CreateApiKeyDialog = ({ children }: CreateApiKeyDialogProps) => {
 
   const onSubmit = async (values: CreateApiKeyFormData) => {
     console.log(values);
-    setIsLoading(true);
-
     try {
       // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const newKey = generateApiKey();
       setGeneratedKey(newKey);
       setIsKeyGenerated(true);
     } catch (error) {
       console.error("Failed to create API key:", error);
-    } finally {
-      setIsLoading(false);
     }
+
+    //  createApiKey(values.name)
+    //    .unwrap()
+    //    .then((res) => {
+    //      setGeneratedKey(res.key);
+    //      setIsKeyGenerated(true);
+    //    })
+    //    .catch((error) => {
+    //      console.error("Failed to create API key:", error);
+    //      toast.error("Failed to create API key");
+    //    });
   };
 
   const handleCopyKey = async () => {
@@ -108,7 +117,6 @@ const CreateApiKeyDialog = ({ children }: CreateApiKeyDialogProps) => {
       form.reset();
       setIsKeyGenerated(false);
       setIsCopied(false);
-      setIsLoading(false);
     }, 100);
   };
 

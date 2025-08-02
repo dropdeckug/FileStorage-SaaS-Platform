@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useRef, useState, useCallback } from "react";
-import { toast } from "sonner";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,94 +15,42 @@ export const FileUploaderDialog = (props: { children: React.ReactNode }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Use File[] directly
   const fileUploaderRef = useRef<FileUploaderRef>(null);
 
-  const handleFileUpload = useCallback(async (file: File): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      // Simulate network delay
-      setTimeout(() => {
-        if (Math.random() > 0.1) {
-          // 90% success rate for demonstration
-          const newAsset: any = {
-            id: `${file.name}-${Date.now()}`,
-            originalName: file.name,
-            url: file.type.startsWith("image/")
-              ? URL.createObjectURL(file)
-              : "/placeholder.svg?height=40&width=40",
-            mimeType: file.type || "application/octet-stream",
-            ext: file.name.split(".").pop()?.toUpperCase() || "BIN",
-            size: file.size,
-            uploadedVia: "web upload",
-            createdAt: new Date(),
-          };
-          resolve(newAsset);
-        } else {
-          reject(new Error("Simulated upload failure."));
-        }
-      }, 2000); // Simulate 2-second upload time
-    });
-  }, []);
+  const handleUploadButtonClick = () => {};
 
-  const handleUploadButtonClick = async () => {
-    if (selectedFiles.length === 0) {
-      toast.info("Please select files to upload.");
-      return;
-    }
-    setIsOpen(false); // Close the dialog immediately
-
-    const totalFiles = selectedFiles.length;
-    let uploadedCount = 0;
-    let failedCount = 0;
-    const successfulUploads: any[] = [];
-
-    const toastId = toast.loading(`Uploading ${totalFiles} file(s)...`, {
-      description: "Starting upload process...",
-      duration: Number.POSITIVE_INFINITY, // Keep toast open until updated
-    });
-
-    for (const file of selectedFiles) {
-      toast.loading(
-        `Uploading "${file.name}" (${uploadedCount + 1}/${totalFiles})...`,
-        {
-          id: toastId, // Update the existing toast
-          description: "Please wait, your file is being processed.",
-          duration: Number.POSITIVE_INFINITY,
-        }
-      );
-      try {
-        const result = await handleFileUpload(file);
-        successfulUploads.push(result);
-        uploadedCount++;
-      } catch (error) {
-        console.log(error);
-        failedCount++;
-        // Optionally, you could update the toast description to list failed files
-      }
-    }
-    // Final update to the toast
-    if (failedCount === 0) {
-      toast.success(`All ${totalFiles} file(s) uploaded successfully!`, {
-        id: toastId,
-        description: "Your files are now available.",
-        duration: 3000, // Show success for 3 seconds
-      });
-    } else if (uploadedCount > 0) {
-      toast.warning(
-        `Uploaded ${uploadedCount} of ${totalFiles} files. ${failedCount} failed.`,
-        {
-          id: toastId,
-          description: "Some files could not be uploaded.",
-          duration: 5000, // Show warning for 5 seconds
-        }
-      );
-    } else {
-      toast.error(`All ${totalFiles} file(s) failed to upload.`, {
-        id: toastId,
-        description: "Please try again later.",
-        duration: 5000, // Show error for 5 seconds
-      });
-    }
-    fileUploaderRef.current?.clearSelectedFiles(); // Clear files in the uploader component
-    setSelectedFiles([]); // Clear files in dialog state
-  };
+  // const handleUploadButtonClick = async () => {
+  //   if (selectedFiles.length === 0) {
+  //     toast.info("Please select files to upload.");
+  //     return;
+  //   }
+  //   setIsOpen(false); // Close dialog
+  //   const totalFiles = selectedFiles.length;
+  //   const toastId = toast.loading(`Uploading ${totalFiles} file(s)...`, {
+  //     description: "Please wait while we upload your files.",
+  //     duration: Infinity,
+  //   });
+  //   const formData = new FormData();
+  //   selectedFiles.forEach((file) => formData.append("files", file)); // 'files' matches your backend field name
+  //   uploadFiles(formData)
+  //     .unwrap()
+  //     .then((res) => {
+  //       toast.success(`Uploaded ${res.data.length} file(s) successfully`, {
+  //         id: toastId,
+  //         description: "Your files are now available.",
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //       toast.error("Failed to upload files", {
+  //         id: toastId,
+  //         description: "Please try again later.",
+  //       });
+  //     })
+  //     .finally(() => {
+  //       toast.dismiss(toastId);
+  //       fileUploaderRef.current?.clearSelectedFiles();
+  //       setSelectedFiles([]);
+  //     });
+  // };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
