@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/chart";
 import StorageUsage from "./storage-usage";
 import { formatBytes } from "@/lib/format-utils";
-import { format, startOfDay, subDays } from "date-fns";
+import { endOfDay, format, startOfDay, subDays } from "date-fns";
 import { ChartDataType } from "@/features/analytics/anayticsType";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -100,8 +100,8 @@ export function OverviewChart() {
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof CHART_TYPES>("uploads");
 
-  const to = startOfDay(new Date());
-  const from = subDays(to, 29);
+  const from = subDays(startOfDay(new Date()), 29); // substract
+  const to = endOfDay(new Date());
   console.log(from, to);
 
   // const { data, isLoading } = useGetUserAnalyticsWithChartQuery({
