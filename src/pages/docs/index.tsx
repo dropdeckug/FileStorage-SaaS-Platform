@@ -20,6 +20,7 @@ const Docs = () => {
   const { theme } = useTheme();
   const public_baseurl = `${import.meta.env.VITE_API_URL}`;
   const codeTheme = theme === "light" ? atomOneLight : atomOneDark;
+  const backgroundColor = theme === "dark" ? "#161616" : "#fafafa";
 
   return (
     <PageLayout title="Docs" subtitle="Uploadnest API Documentation">
@@ -45,7 +46,13 @@ const Docs = () => {
             </CardHeader>
             <CardContent>
               <div className="overflow-hidden rounded-lg border">
-                <SyntaxHighlighter style={codeTheme}>
+                <SyntaxHighlighter
+                  language=""
+                  style={codeTheme}
+                  customStyle={{
+                    background: backgroundColor,
+                  }}
+                >
                   {"npm install @uploadnest/client"}
                 </SyntaxHighlighter>
               </div>
@@ -62,9 +69,10 @@ const Docs = () => {
             <CardContent>
               <div className="overflow-hidden rounded-lg border">
                 <SyntaxHighlighter
+                  language="javascript"
                   style={codeTheme}
                   customStyle={{
-                    margin: 0,
+                    background: backgroundColor,
                     padding: "1rem",
                   }}
                 >
@@ -96,6 +104,7 @@ console.log(result.files);`}
                   style={codeTheme}
                   customStyle={{
                     margin: 0,
+                    background: backgroundColor,
                     padding: "1rem",
                   }}
                 >
@@ -136,6 +145,7 @@ await client.uploadFiles(buffer);`}
                   style={codeTheme}
                   customStyle={{
                     margin: 0,
+                    background: backgroundColor,
                     padding: "1rem",
                   }}
                 >
@@ -182,6 +192,7 @@ function FileUpload() {
                   style={codeTheme}
                   customStyle={{
                     margin: 0,
+                    background: backgroundColor,
                     padding: "1rem",
                   }}
                 >
@@ -220,6 +231,7 @@ async function uploadAction(formData: FormData) {
                   style={codeTheme}
                   customStyle={{
                     margin: 0,
+                    background: backgroundColor,
                     padding: "1rem",
                   }}
                 >
@@ -284,7 +296,7 @@ try {
                   customStyle={{
                     margin: 0,
                     padding: "1rem",
-                    background: "transparent",
+                    background: backgroundColor,
                   }}
                 >
                   {`async function uploadFileDirectly(apiKey, file) {
