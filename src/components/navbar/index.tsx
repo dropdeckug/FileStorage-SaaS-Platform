@@ -67,7 +67,7 @@ const Navbar = () => {
   };
   return (
     <>
-      <header className="mx-auto flex h-24 w-full max-w-7xl items-center justify-between gap-x-6 border-b p-6 lg:px-8">
+      <header className="mx-auto sticky top-0 bg-background flex h-24 w-full max-w-7xl items-center justify-between gap-x-6 border-b p-6 lg:px-8 z-50">
         <div className="w-full flex h-14 max-w-[var(--max-width)] items-center mx-auto">
           <div className="w-full flex items-center justify-between">
             {/* Left side - Logo */}

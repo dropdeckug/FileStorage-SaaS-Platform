@@ -35,7 +35,7 @@ const SideBar = () => {
   ];
 
   return (
-    <div className="hidden lg:flex w-screen sticky shrink-0 top-0 flex-col sm:w-[215px] h-full">
+    <div className="hidden lg:flex w-screen sticky shrink-0 top-20 flex-col sm:w-[215px] h-full">
       <nav>
         <ul
           className="flex flex-row justify-between gap-x-4 gap-y-2 p-4 

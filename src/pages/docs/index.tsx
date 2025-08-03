@@ -20,14 +20,16 @@ const Docs = () => {
   const { theme } = useTheme();
   const public_baseurl = `${import.meta.env.VITE_API_URL}`;
   const codeTheme = theme === "light" ? atomOneLight : atomOneDark;
+
   return (
     <PageLayout title="Docs" subtitle="Uploadnest API Documentation">
       <div className="mx-auto px-1">
-        <div className="mb-5">
-          <h2 className="text-lg font-semibold">Node.js SDK</h2>
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold">TypeScript/JavaScript SDK</h2>
           <p className="text-sm text-muted-foreground mb-6">
-            Integrate Uploadnest into your Node.js applications with our
-            official SDK. Remember to create your API key on your{" "}
+            TypeScript library for uploading files to Uploadnest API. Works in
+            Node.js, Next.js, and browsers. Remember to create your API key on
+            your{" "}
             <Link
               to={PROTECTED_ROUTES.APIKEYS}
               className="text-primary underline"
@@ -42,9 +44,9 @@ const Docs = () => {
               <CardTitle>Installation</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg bg-[#FAFAFA] dark:bg-[#282C34] border p-4 overflow-auto text-base !py-1">
+              <div className="overflow-hidden rounded-lg border">
                 <SyntaxHighlighter style={codeTheme}>
-                  {"npm install uploadnest"}
+                  {"npm install @uploadnest/client"}
                 </SyntaxHighlighter>
               </div>
             </CardContent>
@@ -52,84 +54,265 @@ const Docs = () => {
 
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle>Usage</CardTitle>
+              <CardTitle>Quick Start</CardTitle>
               <CardDescription>
                 Upload files with just a few lines of code.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg bg-[#FAFAFA] dark:bg-[#282C34] border p-4 overflow-auto text-base !py-1">
-                <SyntaxHighlighter style={codeTheme}>
-                  {`import Uploadnest from 'uploadnest';
-import fs from 'fs'; // fs is a Node.js module, this code runs on the server
+              <div className="overflow-hidden rounded-lg border">
+                <SyntaxHighlighter
+                  style={codeTheme}
+                  customStyle={{
+                    margin: 0,
+                    padding: "1rem",
+                  }}
+                >
+                  {`import { UploadNestClient } from "@uploadnest/client";
 
-const client = new Uploadnest({
-  apiKey: process.env['UPLOADNEST_API_KEY'], // This is the default and can be omitted
+const client = new UploadNestClient({
+  apiKey: process.env.UPLOADNEST_API_KEY, // Your API key
 });
 
-async function uploadFile() {
-  try {
-    const response = await client.files.upload({ files: [fs.createReadStream('path/to/file')] });
-    console.log(response.files);
-  } catch (error) {
-    console.error('Error uploading file:', error);
-  }
-}
-`}
+// Upload files
+const result = await client.uploadFiles(files);
+console.log(result.files);`}
                 </SyntaxHighlighter>
               </div>
-              <p className="mt-4 text-muted-foreground">
-                For detailed information on request/response types and
-                comprehensive error handling, please refer to the{" "}
-                <a
-                  href="https://www.npmjs.com/package/uploadnest"
-                  className="text-primary underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  SDK documentation on npm
-                </a>
-                .
-              </p>
             </CardContent>
           </Card>
-        </div>
 
-        <div>
-          <h2 className="text-lg font-bold mb-6">Or use the API directly</h2>
-          <Card>
+          <Card className="mb-6">
             <CardHeader>
-              <CardTitle>Public API Usage</CardTitle>
+              <CardTitle>Node.js Usage</CardTitle>
               <CardDescription>
-                Interact with the Uploadnest API directly using standard HTTP
-                requests.
+                Upload from file paths or buffers in Node.js applications.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg bg-[#FAFAFA] dark:bg-[#282C34] border p-4 overflow-auto text-base !py-2">
-                <SyntaxHighlighter style={codeTheme}>
-                  {`async function uploadFileDirectly(apiKey) {
-  const formData = new FormData()
-  formData.append('files', image.png);
+              <div className="overflow-hidden rounded-lg border">
+                <SyntaxHighlighter
+                  language="javascript"
+                  style={codeTheme}
+                  customStyle={{
+                    margin: 0,
+                    padding: "1rem",
+                  }}
+                >
+                  {`import { UploadNestClient } from "@uploadnest/client";
+import fs from "fs";
+
+const client = new UploadNestClient({
+  apiKey: process.env.UPLOADNEST_API_KEY,
+});
+
+// Upload from file path
+await client.uploadFiles("/path/to/file.jpg");
+
+// Multiple files
+await client.uploadFiles(["/path/to/file1.jpg", "/path/to/file2.pdf"]);
+
+// Upload buffer
+const buffer = fs.readFileSync("image.jpg");
+buffer.name = "image.jpg";
+buffer.type = "image/jpeg";
+await client.uploadFiles(buffer);`}
+                </SyntaxHighlighter>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Browser/React Usage</CardTitle>
+              <CardDescription>
+                Upload File objects from file inputs in the browser.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-hidden rounded-lg border">
+                <SyntaxHighlighter
+                  language="javascript"
+                  style={codeTheme}
+                  customStyle={{
+                    margin: 0,
+                    padding: "1rem",
+                  }}
+                >
+                  {`import { UploadNestClient } from "@uploadnest/client";
+
+const client = new UploadNestClient({
+  apiKey: "your-api-key",
+});
+
+// From file input
+const fileInput = document.querySelector('input[type="file"]');
+await client.uploadFiles(fileInput.files[0]);
+
+// Multiple files
+await client.uploadFiles(Array.from(fileInput.files));
+
+// In React component
+function FileUpload() {
+  const handleUpload = async (event) => {
+    const files = event.target.files;
+    const result = await client.uploadFiles(files[0]);
+    console.log('Uploaded:', result.files);
+  };
+
+  return <input type="file" onChange={handleUpload} />;
+}`}
+                </SyntaxHighlighter>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Next.js Server Actions</CardTitle>
+              <CardDescription>
+                Use with Next.js App Router server actions.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-hidden rounded-lg border">
+                <SyntaxHighlighter
+                  language="javascript"
+                  style={codeTheme}
+                  customStyle={{
+                    margin: 0,
+                    padding: "1rem",
+                  }}
+                >
+                  {`// app/upload/page.tsx
+import { UploadNestClient } from "@uploadnest/client";
+
+async function uploadAction(formData: FormData) {
+  "use server";
+
+  const client = new UploadNestClient({
+    apiKey: process.env.UPLOADNEST_API_KEY!,
+  });
+
+  const file = formData.get("file") as File;
+  const result = await client.uploadFiles(file);
+
+  return result;
+}`}
+                </SyntaxHighlighter>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Error Handling</CardTitle>
+              <CardDescription>
+                Handle different types of upload errors gracefully.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-hidden rounded-lg border">
+                <SyntaxHighlighter
+                  language="javascript"
+                  style={codeTheme}
+                  customStyle={{
+                    margin: 0,
+                    padding: "1rem",
+                  }}
+                >
+                  {`import { ValidationError, UploadError } from "@uploadnest/client/errors";
+
+try {
+  const result = await client.uploadFiles(files);
+  console.log('Success:', result.files);
+} catch (error) {
+  if (error instanceof ValidationError) {
+    console.log("Invalid file type:", error.message);
+  } else if (error instanceof UploadError) {
+    console.log("Upload failed:", error.message);
+  } else {
+    console.error("Unexpected error:", error);
+  }
+}`}
+                </SyntaxHighlighter>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              📦 Package Information
+            </h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+              For detailed information on all methods, types, and advanced
+              usage, visit the{" "}
+              <a
+                href="https://www.npmjs.com/package/@uploadnest/client"
+                className="underline font-medium text-primary hover:text-red-700 dark:hover:text-red-400"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                @uploadnest/client package on npm
+              </a>
+              .
+            </p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">
+              Supports: Node.js 16+, Modern browsers, Next.js 13+, TypeScript
+              4.5+
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-bold mb-6">Direct API Usage</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>REST API</CardTitle>
+              <CardDescription>
+                Interact with the Uploadnest API directly using standard HTTP
+                requests if you prefer not to use the SDK.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-hidden rounded-lg border">
+                <SyntaxHighlighter
+                  language="javascript"
+                  style={codeTheme}
+                  customStyle={{
+                    margin: 0,
+                    padding: "1rem",
+                    background: "transparent",
+                  }}
+                >
+                  {`async function uploadFileDirectly(apiKey, file) {
+  const formData = new FormData();
+  formData.append('files', file);
+  
   try {
-    const response = await fetch('${public_baseurl}/v1/files/upload',{
-      method:'POST',
-      headers:{
-        'Authorization': \`Bearer \${apiKeys}\`
+    const response = await fetch('${public_baseurl}/v1/files/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': \`Bearer \${apiKey}\`
       },
       body: formData
     });
     
-    if (!response.ok) throw new Error(\`HTTP error! Status: \${response.status}\`);
+    if (!response.ok) {
+      throw new Error(\`HTTP error! Status: \${response.status}\`);
+    }
     
     const data = await response.json();
     console.log('Upload successful:', data);
+    return data;
   } catch (error) {
     console.error('Error uploading file:', error);
+    throw error;
   }
 }
-  //Example Usage: uploadFileDirectly(<API_KEY>)
-`}
+
+// Example Usage
+// uploadFileDirectly('your-api-key', fileObject);`}
                 </SyntaxHighlighter>
               </div>
             </CardContent>
