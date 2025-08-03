@@ -21,7 +21,8 @@ const Files = () => {
       <div className="w-full">
         <UploadFileLayout
           showToolBar
-          isShowPagination={false}
+          isShowPagination={true}
+          pageSize={20}
           layoutView="GRID"
         />
       </div>
