@@ -143,6 +143,7 @@ await client.uploadFiles(buffer);`}
 
 const client = new UploadNestClient({
   apiKey: "your-api-key",
+  forceBrowser: true,
 });
 
 // From file input
@@ -192,6 +193,7 @@ async function uploadAction(formData: FormData) {
 
   const client = new UploadNestClient({
     apiKey: process.env.UPLOADNEST_API_KEY!,
+    forceBrowser: true,
   });
 
   const file = formData.get("file") as File;
