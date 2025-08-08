@@ -20,7 +20,10 @@ const envConfig = () => ({
   LOGTAIL_SOURCE_TOKEN: getEnv('LOGTAIL_SOURCE_TOKEN'),
   LOGTAIL_INGESTING_HOST: getEnv('LOGTAIL_INGESTING_HOST'),
 
-  ALLOWED_ORIGINS: getEnv('ALLOWED_ORIGINS'),
+  ALLOWED_ORIGINS: getEnv(
+    'ALLOWED_ORIGINS',
+    'https://uploadnest-alpha.vercel.app',
+  ),
 });
 
 export const Env = envConfig();
