@@ -236,53 +236,6 @@ const UploadFileLayout = (props: Props) => {
       toast.error("No file selected");
       return;
     }
-
-    //  const toastId = toast.loading("Preparing your download...");
-    //  downloadFiles(fileIds)
-    //    .unwrap()
-    //    .then((res) => {
-    //      toast.dismiss(toastId);
-
-    //      if (res?.downloadUrl) {
-    //        // Same handling for both single files and ZIP files
-    //        const link = document.createElement("a");
-    //        link.href = res.downloadUrl;
-    //        link.download = "";
-    //        document.body.appendChild(link);
-    //        link.click();
-    //        link.remove();
-
-    //        const message = res.isZip
-    //          ? "ZIP file is downloading..."
-    //          : "Your file is downloading...";
-
-    //        toast.success(
-    //          <>
-    //            {message}
-    //            <br />
-    //            If it doesn't start,{" "}
-    //            <a
-    //              href={res.downloadUrl}
-    //              target="_blank"
-    //              rel="noopener noreferrer"
-    //              className="underline !text-black"
-    //            >
-    //              click here
-    //            </a>
-    //            .
-    //          </>
-    //        );
-    //      } else {
-    //        toast.error("Download URL missing.");
-    //      }
-    //    })
-    //    .catch(() => {
-    //      toast.dismiss(toastId);
-    //      toast.error("Download failed. Try again.");
-    //    })
-    //    .finally(() => {
-    //      setSelectedFiles([]);
-    //    });
   };
 
   return (
