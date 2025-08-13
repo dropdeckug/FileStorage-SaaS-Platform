@@ -1,4 +1,4 @@
-# 🌟 Advanced MERN FileStorage SaaS Platform - UploadNest
+# 🌟 Advanced MERN FileStorage Platform - UploadNest
 
 > This code, whether in parts or whole, is licensed for commercial use **only with a license**. It is **free for personal use**.
 > 👉 [DM to obtain license](https://x.com/techwithemma) and 👉 [here to learn more](https://github.com/TechWithEmmaYT/Advanced-MERN-AI-Financial-SaaS-Platform/blob/main/TECHWITHEMMA-LICENSE.md)
