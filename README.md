@@ -34,7 +34,6 @@ Love this project? Here’s how you can support:
 - 📦 TypeScript SDK Published to npm
 - 🔑 API Key Authentication for Secure Access
 - 📅 Pagination & File Search
-- 📄 Documentation
 - 📝 Logging
 - 🚀 Deployment
 - 🌐 Built with MERN Stack (Node.js, MongoDB, React 19)
