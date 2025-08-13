@@ -1,103 +1,122 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
+import { uploadAction } from "./actions";
 
-export default function Home() {
+export default function UploadTest() {
+  const [files, setFiles] = useState<FileList | null>(null);
+  const [response, setResponse] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Server Action upload
+  const uploadWithServerAction = async () => {
+    if (!files) return;
+    setResponse(null);
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData();
+      [...files].forEach((file) => formData.append("files", file));
+
+      const result = await uploadAction(formData);
+      setResponse(result);
+    } catch (error: any) {
+      console.error("Server Action error:", error);
+      setResponse({ error: error.message });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // API Route upload
+  const uploadWithAPI = async () => {
+    if (!files) return;
+    setResponse(null);
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData();
+      [...files].forEach((file) => formData.append("files", file));
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+      const result = await res.json();
+      setResponse(result);
+    } catch (error: any) {
+      console.error("API Route error:", error);
+      setResponse({ error: error.message });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="max-w-2xl mx-auto p-6 space-y-4">
+      <h1 className="text-2xl font-bold text-center mb-6">UploadNest Test</h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <input
+        type="file"
+        multiple
+        onChange={(e) => setFiles(e.target.files)}
+        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-100 file:text-blue-700"
+      />
+
+      {files && (
+        <div className="flex gap-2 mt-4 flex-wrap">
+          {Array.from(files)
+            .filter((file) => file.type.startsWith("image/"))
+            .map((file) => (
+              <div
+                key={file.name}
+                className="!w-30 h-30 rounded overflow-hidden border shadow-sm"
+              >
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={file.name}
+                  className="w-full h-full"
+                />
+              </div>
+            ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      )}
+
+      <div className="flex gap-4">
+        <button
+          onClick={uploadWithServerAction}
+          disabled={!files || isLoading}
+          className={`flex-1 py-2 rounded text-white ${
+            !files || isLoading
+              ? "bg-gray-400"
+              : "bg-green-600 hover:bg-green-700"
+          }`}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          {isLoading ? "Uploading..." : "Server Action"}
+        </button>
+
+        <button
+          onClick={uploadWithAPI}
+          disabled={!files || isLoading}
+          className={`flex-1 py-2 rounded text-white ${
+            !files || isLoading
+              ? "bg-gray-400"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {isLoading ? "Uploading..." : "API Route"}
+        </button>
+      </div>
+
+      {response && (
+        <div className="bg-gray-50 p-4 rounded border">
+          <strong className="block mb-2">Response:</strong>
+          <pre className="text-xs overflow-auto max-h-40">
+            {JSON.stringify(response, null, 2)}
+          </pre>
+        </div>
+      )}
     </div>
   );
 }
