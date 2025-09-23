@@ -173,41 +173,53 @@ export const getFileUrlService = async (fileId: string) => {
 };
 
 export const deleteFilesService = async (userId: string, fileIds: string[]) => {
-  const files = await FileModel.find({
-    _id: { $in: fileIds },
-  });
-  if (!files.length) throw new NotFoundException('No files found');
+  const session = await mongoose.startSession();
+  try {
+    
+  let result;
 
-  const s3Errors: string[] = [];
-
-  await Promise.all(
-    files.map(async (file) => {
-      try {
-        await deleteFromS3(file.storageKey);
-      } catch (error) {
-        logger.error(`Failed to delete ${file.storageKey} from s3`, error);
-        s3Errors.push(file.storageKey);
-      }
-    }),
-  );
-
-  const successfulFileIds = files
-    .filter((file) => !s3Errors.includes(file.storageKey))
-    .map((file) => file._id);
-
-  const { deletedCount } = await FileModel.deleteMany({
-    _id: { $in: successfulFileIds },
-    userId,
-  });
-
-  if (s3Errors.length > 0) {
-    logger.warn(`Failed to delete ${s3Errors.length} files form S3`);
+   //  withTransaction handles the transaction, rollback
+  await session.withTransaction(() => {
+    const files = await FileModel.find(
+      { _id: { $in: fileIds }, userId,},
+    ).session(session);
+    if (!files.length) throw new NotFoundException('No files found');
+  
+    const s3Errors: string[] = [];
+  
+    await Promise.all(
+      files.map(async (file) => {
+        try {
+          await deleteFromS3(file.storageKey);
+        } catch (error) {
+          logger.error(`Failed to delete ${file.storageKey} from s3`, error);
+          s3Errors.push(file.storageKey);
+        }
+      }),
+    );
+    const successfulFileIds = files
+      .filter((file) => !s3Errors.includes(file.storageKey))
+      .map((file) => file._id);
+  
+    const { deletedCount } = await FileModel.deleteMany(
+      { _id: { $in: successfulFileIds }, userId,}
+    ).session(session);
+  
+    if (s3Errors.length > 0) {
+      logger.warn(`Failed to delete ${s3Errors.length} files form S3`);
+    }
+  
+    result = {
+      deletedCount,
+      failedCount: s3Errors.length,
+    };
+  })
+    return result;
+  } catch(error){
+    throw error
+  } finally{
+    await session.endSession()
   }
-
-  return {
-    deletedCount,
-    failedCount: s3Errors.length,
-  };
 };
 
 export const downloadFilesService = async (
@@ -215,7 +227,8 @@ export const downloadFilesService = async (
   fileIds: string[],
 ) => {
   const files = await FileModel.find({
-    _id: { $in: fileIds },
+    _id: { $in: fileIds, },
+     userId,
   });
   if (!files.length) throw new NotFoundException('No files found');
 
